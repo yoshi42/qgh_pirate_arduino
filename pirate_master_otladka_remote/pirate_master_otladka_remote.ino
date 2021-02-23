@@ -15,7 +15,7 @@
 
   //1st room actuators
     int rel_door_fake =22;
-    int rel_door1 = 23;
+    int rel_door1 = 23; //low = closed, high = opened
 
     int led_fakel12 = 38;
     int led_fakel3 = 39;
@@ -443,7 +443,7 @@ void ready_to_start() //обнулення флагів і релех
   {
   //початковий стан всіх релех і виводів
   digitalWrite(rel_door_fake, HIGH);
-  digitalWrite(rel_door1, LOW);
+  digitalWrite(rel_door1, HIGH);  //low = closed
 
   digitalWrite(led_fakel12, LOW);
   digitalWrite(led_fakel3, LOW);
@@ -454,20 +454,20 @@ void ready_to_start() //обнулення флагів і релех
 
   digitalWrite(rel_lampa, HIGH);
   digitalWrite(rel_sunduk, HIGH);
-  digitalWrite(rel_kletka, HIGH);
+  digitalWrite(rel_kletka, LOW); //HIGH = closed
 
-  digitalWrite(rel_cracken, HIGH);
+  digitalWrite(rel_cracken, LOW); //changed to NO contact
   digitalWrite(led_cracken, LOW);
   digitalWrite(rel_led_cracken, HIGH);
   digitalWrite(rel_8, HIGH);
 
   digitalWrite(rel_moneta1, HIGH);
-  digitalWrite(rel_moneta2, HIGH);
+  digitalWrite(rel_moneta2, LOW); //changed to NO contact
   digitalWrite(rel_moneta3, HIGH);
   digitalWrite(rel_moneta4, HIGH);
   digitalWrite(rel_moneta5, HIGH);
-  digitalWrite(rel_door2, HIGH);
-  digitalWrite(rel_door3, HIGH);
+  digitalWrite(rel_door2, LOW); //HIGH = closed
+  digitalWrite(rel_door3, LOW); //HIGH = closed
   digitalWrite(rel_prikol, HIGH);
 
   //обнулення всіх флагів (це на даний момент непотрібна дія, але коли буде пульт управління, то - це необхідний луп. 
@@ -935,15 +935,15 @@ void sunduk()
       switch(sayString[i])
       {
       case '.': //dot
-        mp3_set_serial(Serial3);
-        mp3_set_volume(20);
+        mp3_set_serial(Serial);
+        mp3_set_volume(30);
         mp3_play(55); //Файл тук короткий
         delay(dotDuration);
         delay(dotDuration);
       break;
       case '-': //dash
-        mp3_set_serial(Serial3);
-        mp3_set_volume(20);      
+        mp3_set_serial(Serial);
+        mp3_set_volume(30);
         mp3_play(55); //Файл тук довгий
         delay(dotDuration*3);
         delay(dotDuration);
@@ -1257,8 +1257,8 @@ void open_cracken()
   {
   // ефект відкривання кракена
     delay (50);
-    digitalWrite(rel_cracken, LOW);
-    digitalWrite(rel_led_cracken, LOW);    
+    digitalWrite(rel_cracken, HIGH);
+    digitalWrite(rel_led_cracken, LOW);
   }
 
 void cracken() //Завдання8 - Якщо N монет стоять на місцях, то відкривається дверця, загорається світло. Вставляєш кріптекс, падає монета, грає аудіо
@@ -1580,11 +1580,11 @@ void open_moneta2() //Дія - падає монета, грає аудіо
     mp3_set_volume(20);
     mp3_play(59); //звук гонгу "ще одну монету добуто"
     delay(50);
-    digitalWrite(rel_moneta2, LOW);
-    delay(20);
     digitalWrite(rel_moneta2, HIGH);
     delay(20);
     digitalWrite(rel_moneta2, LOW);
+    delay(20);
+    digitalWrite(rel_moneta2, HIGH);
     delay(20);
   }
 
@@ -1637,8 +1637,10 @@ void exit() //Дія - двері, аудіо
   {
     //ефект відкриття дверей, фінальна промова
     delay(50);
+    digitalWrite(rel_door1, HIGH);
     digitalWrite(rel_door2, LOW);
     digitalWrite(rel_door3, LOW);
+    digitalWrite(rel_kletka, LOW);
   }
 
   void entrance() //Дія - двері, аудіо
@@ -1733,8 +1735,10 @@ void timer_one_hour()
                 mp3_set_volume(3);
                 delay(200);
                 mp3_pause();
+                digitalWrite(rel_door1, HIGH);
                 digitalWrite(rel_door2, LOW);
                 digitalWrite(rel_door3, LOW);
+                digitalWrite(rel_kletka, LOW);
               }
             w_timer_one_hour++;
           }
@@ -1903,6 +1907,11 @@ void fakel_easy()// по-черзі вставити у всі -- відкрив
     mp3_set_serial(Serial2);
     mp3_set_volume(25);
     mp3_play(70);
+
+    digitalWrite(rel_door1, LOW);
+    digitalWrite(rel_door2, HIGH);
+    digitalWrite(rel_door3, HIGH);
+    digitalWrite(rel_kletka, HIGH);
 
     timer_one_hour();
     }
